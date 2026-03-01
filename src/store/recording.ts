@@ -1,0 +1,2 @@
+// Recording store — placeholder
+export {};

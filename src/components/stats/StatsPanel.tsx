@@ -1,0 +1,2 @@
+// StatsPanel — placeholder
+export {};

@@ -1,0 +1,2 @@
+// useMouseData hook — placeholder
+export {};
