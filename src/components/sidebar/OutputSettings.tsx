@@ -1,2 +1,0 @@
-// OutputSettings — placeholder
-export {};

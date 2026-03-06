@@ -1,2 +1,0 @@
-// ActivityLog — placeholder
-export {};

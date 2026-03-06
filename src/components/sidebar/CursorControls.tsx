@@ -1,2 +1,0 @@
-// CursorControls — placeholder
-export {};

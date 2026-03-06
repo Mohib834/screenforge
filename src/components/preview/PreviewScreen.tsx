@@ -1,2 +1,0 @@
-// PreviewScreen — placeholder
-export {};

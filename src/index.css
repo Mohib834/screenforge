@@ -1,10 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap");
 @import "tailwindcss";
 
 @theme {
   /* ── Colors ─────────────────────────────────────────── */
   --color-sf-bg:        #0a0a0b;
   --color-sf-panel:     #111113;
-  --color-sf-hover:     #1a1a1d;
 
   --color-sf-border:    #1e1e22;
   --color-sf-border-lt: #2a2a2f;
@@ -13,12 +13,18 @@
   --color-sf-secondary: #6b6b72;
   --color-sf-muted:     #3d3d44;
 
-  --color-sf-accent: #5b6af7;
   --color-sf-red:    #e54d4d;
   --color-sf-green:  #3ecf8e;
+  
+  --color-primary: #e44c0a;
+  --color-secondary: #1a1a1d;
+
+  --color-input: var(--color-sf-secondary);
+  --color-select: var(--color-sf-secondary);
+  --color-ring: var(--color-primary);
 
   /* ── Typography ──────────────────────────────────────── */
-  --font-sans: Inter, -apple-system, sans-serif;
+  --font-sans: "Geist", -apple-system, sans-serif;
 
   --text-2xs: 10px;
   --text-2xs--line-height: 1.4;
@@ -48,7 +54,7 @@
   /* ── Shadows ─────────────────────────────────────────── */
   --shadow-rec:         0 0 0 8px  rgba(229, 77, 77, 0.10);
   --shadow-rec-hover:   0 0 0 12px rgba(229, 77, 77, 0.12);
-  --shadow-accent-glow: 0 0 16px   rgba(91, 106, 247, 0.6);
+  --shadow-accent-glow: 0 0 16px   rgba(228, 76, 10, 0.6);
 
   /* ── Animations ──────────────────────────────────────── */
   --animate-rec-pulse:  pulse 1s   ease-in-out infinite;
@@ -68,4 +74,94 @@
 
 @utility bg-accent-glow {
   background-image: radial-gradient(circle, rgba(91, 106, 247, 0.07) 0%, transparent 70%);
+}
+
+/* ── react-timeline-editor theme overrides ────────────────────────────────── */
+
+.sf-timeline-wrapper .timeline-editor {
+  background-color: #0d0d0f !important;
+  font-family: var(--font-sans) !important;
+}
+
+/* Ruler / time area */
+.sf-timeline-wrapper .timeline-editor-time-area {
+  background-color: #0d0d0f !important;
+  border-bottom: 2px solid var(--color-sf-border) !important;
+}
+
+.sf-timeline-wrapper .timeline-editor-time-unit {
+  border-right-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.sf-timeline-wrapper .timeline-editor-time-unit-scale {
+  color: var(--color-sf-secondary) !important;
+  font-size: 9px !important;
+  font-family: monospace !important;
+}
+
+/* Edit rows */
+.sf-timeline-wrapper .timeline-editor-edit-row {
+  background-image:
+    linear-gradient(#0f0f12, #0f0f12),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 0) !important;
+  border-bottom: 1px solid var(--color-sf-border) !important;
+}
+
+.sf-timeline-wrapper .timeline-editor-edit-row:nth-child(even) {
+  background-image:
+    linear-gradient(#0d0d0f, #0d0d0f),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 0) !important;
+}
+
+/* Action clip — transparent so our getActionRender shows through */
+.sf-timeline-wrapper .timeline-editor-action {
+  background-color: transparent !important;
+  border-radius: 3px !important;
+  overflow: visible !important;
+}
+
+/* Hide default stretch handles (we use the library's built-in ones but style them) */
+.sf-timeline-wrapper .timeline-editor-action-left-stretch,
+.sf-timeline-wrapper .timeline-editor-action-right-stretch {
+  width: 6px !important;
+  border-radius: 2px !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  z-index: 10 !important;
+}
+
+.sf-timeline-wrapper .timeline-editor-action-left-stretch::after,
+.sf-timeline-wrapper .timeline-editor-action-right-stretch::after {
+  display: none !important;
+}
+
+/* Playhead cursor */
+.sf-timeline-wrapper .timeline-editor-cursor {
+  border-left-color: #3d9bff !important;
+  border-right-color: #3d9bff !important;
+}
+
+.sf-timeline-wrapper .timeline-editor-cursor-top {
+  border-top-color: #3d9bff !important;
+}
+
+/* Drag line */
+.sf-timeline-wrapper .timeline-editor-drag-line {
+  border-left-color: rgba(61, 155, 255, 0.5) !important;
+}
+
+/* Scrollbar */
+.sf-timeline-wrapper .timeline-editor-edit-area .ReactVirtualized__Grid::-webkit-scrollbar {
+  height: 4px !important;
+}
+
+.sf-timeline-wrapper
+  .timeline-editor-edit-area
+  .ReactVirtualized__Grid::-webkit-scrollbar-thumb {
+  background: var(--color-sf-border-lt) !important;
+  border-radius: 4px !important;
+}
+
+/* Row drag handle — hide since we don't use row reordering */
+.sf-timeline-wrapper .timeline-editor-edit-row-drag-handle {
+  display: none !important;
 }

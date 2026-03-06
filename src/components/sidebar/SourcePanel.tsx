@@ -1,2 +1,0 @@
-// SourcePanel — placeholder
-export {};
