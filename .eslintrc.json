@@ -11,10 +11,38 @@
     "plugin:import/recommended",
     "plugin:import/electron",
     "plugin:import/typescript",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
+  "plugins": ["react", "react-hooks"],
+  "rules": {
+    "react/function-component-definition": [
+      "error",
+      { "namedComponents": "arrow-function", "unnamedComponents": "arrow-function" }
+    ],
+    "react-hooks/set-state-in-effect": "warn",
+    "react-hooks/immutability": "warn",
+    "curly": ["error", "all"]
+  },
+  "overrides": [
+    {
+      "files": ["src/lib/**/*"],
+      "rules": {
+        "react/function-component-definition": "off",
+        "react-hooks/immutability": "off",
+        "react-hooks/set-state-in-effect": "off",
+        "react-hooks/static-components": "off",
+        "react-hooks/refs": "off"
+      }
+    }
+  ],
   "settings": {
+    "react": {
+      "version": "detect"
+    },
     "import/resolver": {
       "typescript": {
         "project": "./tsconfig.json"

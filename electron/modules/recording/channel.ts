@@ -7,7 +7,10 @@ export function registerRecordingChannels(): void {
     startMouseTracking();
   });
 
-  ipcMain.handle(CH.recording.STOP, () => ({ mouseData: stopMouseTracking() }));
+  ipcMain.handle(CH.recording.STOP, () => {
+    const { events, startTime, recordingArea } = stopMouseTracking();
+    return { mouseData: events, startTime, recordingArea };
+  });
 
   ipcMain.handle(CH.recording.SAVE, (_event, buffer: ArrayBuffer) => saveRecording(buffer));
 }

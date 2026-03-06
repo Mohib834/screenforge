@@ -1,19 +1,30 @@
-import { app, BrowserWindow, ipcMain, screen, session } from 'electron';
-import path from 'node:path';
+import { app, BrowserWindow, ipcMain, protocol, screen, session } from 'electron';
 import started from 'electron-squirrel-startup';
+import path from 'node:path';
+import { registerProtocols } from './protocol';
+import type { RecordingResult } from '../src/types/index';
+import { CH } from './channels';
 import log from './lib/logger';
+import { registerAppChannels } from './modules/app/channel';
 import { runPreloadTasks } from './modules/app/service';
-
-log.initialize();
-import { registerSourcesChannels } from './modules/sources/channel';
+import { registerLibraryChannels } from './modules/library/channel';
 import { registerRecordingChannels } from './modules/recording/channel';
 import { registerSettingsChannels } from './modules/settings/channel';
-import { registerLibraryChannels } from './modules/library/channel';
-import { registerAppChannels } from './modules/app/channel';
-import { CH } from './channels';
-import type { RecordingResult } from '../src/types/index';
+import { registerSourcesChannels } from './modules/sources/channel';
 
-if (started) app.quit();
+log.initialize();
+
+if (started) {
+  app.quit();
+}
+
+// Must be called before app.ready
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'screenforge',
+    privileges: { secure: true, standard: true, stream: true, supportFetchAPI: true },
+  },
+]);
 
 const PRELOAD_PATH = path.join(__dirname, 'preload.js');
 
@@ -101,11 +112,17 @@ function createToolbarWindow(): BrowserWindow {
   // Follow the active desktop on all platforms
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   win.setAlwaysOnTop(true, 'floating');
+  // Exclude this window from all screen capture — toolbar controls must not
+  // appear in the user's recording output.
+  win.setContentProtection(true);
+
   loadURL(win, 'toolbar');
   return win;
 }
 
 app.on('ready', async () => {
+  registerProtocols();
+
   // Allow screen capture permissions
   session.defaultSession.setPermissionRequestHandler((_wc, _perm, cb) => cb(true));
   session.defaultSession.setPermissionCheckHandler(() => true);
@@ -146,7 +163,9 @@ ipcMain.on(CH.recording.FINISHED, (_event, data: RecordingResult) => {
 // ── App lifecycle ─────────────────────────────────────────────────────────────
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
 app.on('activate', () => {

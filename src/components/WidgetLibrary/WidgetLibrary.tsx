@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { IconVideo, IconZoomIn } from "@tabler/icons-react"
 import { AnimatePresence, motion } from "motion/react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "../lib/ui"
-import { ZoomWidget } from "./widgets/ZoomWidget"
-import { RecordingWidget } from "./widgets/RecordingWidget"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../lib/ui"
+import { ZoomWidget } from "./_components/ZoomWidget"
+import { RecordingWidget } from "./_components/RecordingWidget"
 
 type Tab = "recordings" | "zoom"
 
@@ -12,7 +12,7 @@ const NAV_ITEMS: { id: Tab; icon: React.ReactNode; label: string }[] = [
     { id: "zoom", icon: <IconZoomIn className="size-5" />, label: "Zoom" },
 ]
 
-export const AppWidgets = () => {
+export const WidgetLibrary = () => {
     const [active, setActive] = useState<Tab>("recordings")
 
     return (

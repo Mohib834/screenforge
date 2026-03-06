@@ -1,11 +1,9 @@
-// ── Preload progress ──────────────────────────────────────────────────────────
 export interface PreloadProgress {
   task: string;
   completed: number;
   total: number;
 }
 
-// ── Desktop sources ───────────────────────────────────────────────────────────
 export interface DesktopSource {
   id: string;
   name: string;
@@ -13,22 +11,34 @@ export interface DesktopSource {
   appIcon: string | null;
 }
 
-// ── Cursor tracking ───────────────────────────────────────────────────────────
+export type CursorType = 'default' | 'pointer' | 'text' | 'crosshair' | 'grab';
+
 export interface CursorEvent {
-  x: number;
-  y: number;
-  type: 'move' | 'click' | 'scroll';
+  type: 'move' | 'mouseup' | 'mousedown' | 'scroll';
+  x?: number;
+  y?: number;
+  deltaX?: number; // for scroll
+  deltaY?: number; // for scroll
+  button?: string | number;
   timestamp: number;
+  cursorType?: CursorType; // populated by native cursor detection (future)
 }
 
-// ── Recording result ──────────────────────────────────────────────────────────
+export interface RecordingArea {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface RecordingResult {
   filePath: string;
   mouseData: CursorEvent[];
   duration: number;
+  startTime: number;      // Date.now() when recording began — anchor for event timestamps
+  recordingArea: RecordingArea; // logical-pixel bounds of the captured display
 }
 
-// ── Library ───────────────────────────────────────────────────────────────────
 export interface LibraryItem {
   name: string;
   path: string;
@@ -37,7 +47,6 @@ export interface LibraryItem {
   createdAt: string;
 }
 
-// ── Settings ──────────────────────────────────────────────────────────────────
 export interface AppSettings {
   outputFolder: string;
   defaultResolution: '720p' | '1080p' | '4k';
@@ -49,14 +58,14 @@ export interface AppSettings {
   showInMenuBar: boolean;
 }
 
-// ── Preload API ───────────────────────────────────────────────────────────────
 export interface ScreenforgeAPI {
   onPreloadProgress: (cb: (p: PreloadProgress) => void) => () => void;
   getSources: () => Promise<DesktopSource[]>;
   startRecording: (sourceId: string) => Promise<void>;
-  stopRecording: () => Promise<{ mouseData: CursorEvent[] }>;
+  stopRecording: () => Promise<{ mouseData: CursorEvent[]; startTime: number; recordingArea: RecordingArea }>;
   saveRecording: (buffer: ArrayBuffer) => Promise<string>;
   recordingFinished: (data: RecordingResult) => void;
+  onRecordingLoad: (cb: (data: RecordingResult) => void) => () => void;
   getSettings: () => Promise<AppSettings>;
   saveSettings: (settings: AppSettings) => Promise<void>;
   getLibrary: () => Promise<LibraryItem[]>;

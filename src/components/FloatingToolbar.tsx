@@ -23,9 +23,9 @@ import type { DesktopSource, CursorEvent } from '../types/index';
 import { useGlobalTooltip } from '../lib/ui/components/primitives/tooltip';
 
 type SourceTab = 'display' | 'window' | 'area';
-type RecordState = 'idle' | 'recording' | 'paused';
+type RecordState = 'idle' | 'countdown' | 'recording' | 'paused';
 
-function Divider() {
+const Divider = () => {
   return <div className="h-6 w-px bg-sf-border-lt" />;
 }
 
@@ -47,10 +47,11 @@ function tabCls(active: boolean, disabled = false) {
 
 // ── Main toolbar ──────────────────────────────────────────────────────────────
 
-export default function FloatingToolbar() {
+const FloatingToolbar = () => {
   const [tab, setTab] = useState<SourceTab>('display');
   const [recordState, setRecordState] = useState<RecordState>('idle');
   const [elapsed, setElapsed] = useState(0);
+  const [countdown, setCountdown] = useState(3);
   const [sources, setSources] = useState<DesktopSource[]>([]);
   const [selectedSource, setSelectedSource] = useState<DesktopSource | null>(null);
 
@@ -76,12 +77,22 @@ export default function FloatingToolbar() {
         setElapsed(Math.floor((Date.now() - startTimeRef.current) / 1000));
       }, 1000);
     } else {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) { clearInterval(timerRef.current); }
     }
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) { clearInterval(timerRef.current); }
     };
   }, [recordState]);
+
+  useEffect(() => {
+    if (recordState !== 'countdown') { return; }
+    if (countdown <= 0) {
+      handleStart();
+      return;
+    }
+    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [recordState, countdown]); // handleStart is intentionally excluded — it reads latest state via closure
 
   useEffect(() => {
     hideImmediate();
@@ -91,13 +102,13 @@ export default function FloatingToolbar() {
     if (tab === 'display') {
       return selectedSource?.id ?? sources.find((s) => s.id.startsWith('screen'))?.id ?? null;
     }
-    if (tab === 'window') return selectedSource?.id ?? null;
+    if (tab === 'window') { return selectedSource?.id ?? null; }
     return null;
   }, [tab, selectedSource, sources]);
 
   async function handleStart() {
     const sourceId = getSourceId();
-    if (!sourceId) return;
+    if (!sourceId) { return; }
 
     await window.screenforge.startRecording(sourceId);
 
@@ -108,10 +119,7 @@ export default function FloatingToolbar() {
         mandatory: {
           chromeMediaSource: 'desktop',
           chromeMediaSourceId: sourceId,
-          minWidth: 1280,
-          maxWidth: 1920,
-          minHeight: 720,
-          maxHeight: 1080,
+          cursor: 'never',
         },
       },
     });
@@ -121,7 +129,7 @@ export default function FloatingToolbar() {
 
     const mr = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
     mr.ondataavailable = (e) => {
-      if (e.data.size > 0) chunksRef.current.push(e.data);
+      if (e.data.size > 0) { chunksRef.current.push(e.data); }
     };
     mr.start(1000);
     mediaRecorderRef.current = mr;
@@ -132,7 +140,7 @@ export default function FloatingToolbar() {
 
   function handlePause() {
     const mr = mediaRecorderRef.current;
-    if (!mr) return;
+    if (!mr) { return; }
     if (recordState === 'recording') {
       mr.pause();
       setRecordState('paused');
@@ -145,7 +153,7 @@ export default function FloatingToolbar() {
 
   async function handleStop() {
     const mr = mediaRecorderRef.current;
-    if (!mr) return;
+    if (!mr) { return; }
 
     const duration = elapsed;
     setRecordState('idle');
@@ -156,7 +164,7 @@ export default function FloatingToolbar() {
     });
     streamRef.current?.getTracks().forEach((t) => t.stop());
 
-    const { mouseData } = await window.screenforge.stopRecording();
+    const { mouseData, recordingArea } = await window.screenforge.stopRecording();
     const blob = new Blob(chunksRef.current, { type: 'video/webm' });
     const buffer = await blob.arrayBuffer();
     const filePath = await window.screenforge.saveRecording(buffer);
@@ -165,12 +173,18 @@ export default function FloatingToolbar() {
       filePath,
       mouseData: mouseData as CursorEvent[],
       duration,
+      // Use the renderer-side timestamp from mr.start() — this is the precise
+      // reference point that aligns cursor events with video frames.
+      // The main-process startTime is set earlier (before IPC round-trip +
+      // getUserMedia), which would cause the cursor to lag during playback.
+      startTime: startTimeRef.current,
+      recordingArea,
     });
   }
 
   function handleTabChange(t: SourceTab) {
     setTab(t);
-    if (t !== 'window') setSelectedSource(null);
+    if (t !== 'window') { setSelectedSource(null); }
   }
 
   const pillVisible = tab === 'window' && !!selectedSource;
@@ -183,7 +197,30 @@ export default function FloatingToolbar() {
       >
         <div className="flex h-full w-max items-center px-4">
           <AnimatePresence mode="wait">
-            {recordState === 'idle' ? (
+            {recordState === 'countdown' ? (
+              <motion.div
+                key="countdown"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center gap-4 px-2"
+              >
+                <span className="text-sm text-sf-secondary">Starting in</span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={countdown}
+                    initial={{ opacity: 0, scale: 1.4 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.6 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
+                    className="min-w-[1ch] text-center font-mono text-2xl font-bold tabular-nums text-sf-primary"
+                  >
+                    {countdown}
+                  </motion.span>
+                </AnimatePresence>
+              </motion.div>
+            ) : recordState === 'idle' ? (
               <motion.div
                 key="idle"
                 initial={{ opacity: 0 }}
@@ -231,7 +268,7 @@ export default function FloatingToolbar() {
 
                   <DropdownMenu
                     onOpenChange={(open) => {
-                      if (open) window.screenforge.getSources().then(setSources);
+                      if (open) { window.screenforge.getSources().then(setSources); }
                     }}
                   >
                     <Tooltip side="top">
@@ -361,7 +398,7 @@ export default function FloatingToolbar() {
                 <Tooltip side="top">
                   <TooltipTrigger asChild>
                     <button
-                      onClick={handleStart}
+                      onClick={() => { setCountdown(3); setRecordState('countdown'); }}
                       disabled={tab === 'window' && !selectedSource}
                       className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-[#e54d4d] text-white shadow-[0_0_14px_rgba(229,77,77,0.5)] transition-all hover:bg-[#ef5f5f] active:scale-95 disabled:opacity-40"
                     >
@@ -416,3 +453,5 @@ export default function FloatingToolbar() {
     </div>
   );
 }
+
+export default FloatingToolbar

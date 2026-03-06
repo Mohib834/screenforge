@@ -8,7 +8,7 @@ interface ExportModalProps {
   onClose: () => void;
 }
 
-export default function ExportModal({ open, onClose }: ExportModalProps) {
+const ExportModal = ({ open, onClose }: ExportModalProps) => {
   const [resolution, setResolution] = useState('1080p');
   const [format, setFormat] = useState('MP4');
   const [folder, setFolder] = useState('~/Movies/Screenforge');
@@ -97,3 +97,5 @@ export default function ExportModal({ open, onClose }: ExportModalProps) {
     </AnimatePresence>
   );
 }
+
+export default ExportModal

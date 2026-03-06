@@ -23,7 +23,7 @@ type SlotProps<T extends HTMLElement = HTMLElement> = {
 function mergeRefs<T>(...refs: (React.Ref<T> | undefined)[]): React.RefCallback<T> {
   return (node) => {
     refs.forEach((ref) => {
-      if (!ref) return;
+      if (!ref) {return;}
       if (typeof ref === 'function') {
         ref(node);
       } else {
@@ -65,7 +65,7 @@ function Slot<T extends HTMLElement = HTMLElement>({ children, ref, ...props }: 
     [isAlreadyMotion, children.type],
   );
 
-  if (!React.isValidElement(children)) return null;
+  if (!React.isValidElement(children)) {return null;}
 
   const { ref: childRef, ...childProps } = children.props as AnyProps;
 

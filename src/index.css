@@ -89,14 +89,17 @@
   border-bottom: 2px solid var(--color-sf-border) !important;
 }
 
+
 .sf-timeline-wrapper .timeline-editor-time-unit {
   border-right-color: rgba(255, 255, 255, 0.1) !important;
+  overflow: visible !important;
 }
 
 .sf-timeline-wrapper .timeline-editor-time-unit-scale {
   color: var(--color-sf-secondary) !important;
   font-size: 9px !important;
   font-family: monospace !important;
+  overflow: visible !important;
 }
 
 /* Edit rows */
@@ -136,12 +139,12 @@
 
 /* Playhead cursor */
 .sf-timeline-wrapper .timeline-editor-cursor {
-  border-left-color: #3d9bff !important;
-  border-right-color: #3d9bff !important;
+  border-left-color: var(--color-primary) !important;
+  border-right-color: var(--color-primary) !important;
 }
 
-.sf-timeline-wrapper .timeline-editor-cursor-top {
-  border-top-color: #3d9bff !important;
+.sf-timeline-wrapper .timeline-editor-cursor svg path {
+  fill: var(--color-primary) !important;
 }
 
 /* Drag line */

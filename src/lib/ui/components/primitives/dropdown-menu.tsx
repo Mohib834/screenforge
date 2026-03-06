@@ -105,7 +105,7 @@ function DropdownMenuSubTrigger({ disabled, textValue, ...props }: DropdownMenuS
     if (value === true) {
       const el = highlightedRef.current;
       const v = el?.dataset.value || el?.id || null;
-      if (v) setHighlightedValue(v);
+      if (v) {setHighlightedValue(v);}
     }
   });
 
@@ -298,7 +298,7 @@ function DropdownMenuItem({ disabled, onSelect, textValue, ...props }: DropdownM
     if (value === true) {
       const el = highlightedRef.current;
       const v = el?.dataset.value || el?.id || null;
-      if (v) setHighlightedValue(v);
+      if (v) {setHighlightedValue(v);}
     }
   });
 
@@ -334,7 +334,7 @@ function DropdownMenuCheckboxItem({
     if (value === true) {
       const el = highlightedRef.current;
       const v = el?.dataset.value || el?.id || null;
-      if (v) setHighlightedValue(v);
+      if (v) {setHighlightedValue(v);}
     }
   });
 
@@ -371,7 +371,7 @@ function DropdownMenuRadioItem({
     if (value === true) {
       const el = highlightedRef.current;
       const v = el?.dataset.value || el?.id || null;
-      if (v) setHighlightedValue(v);
+      if (v) {setHighlightedValue(v);}
     }
   });
 

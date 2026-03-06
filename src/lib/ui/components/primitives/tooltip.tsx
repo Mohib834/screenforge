@@ -76,9 +76,9 @@ function getResolvedSide(placement: Side | `${Side}-${Align}`) {
 }
 
 function initialFromSide(side: Side): Partial<Record<'x' | 'y', number>> {
-  if (side === 'top') return { y: 15 };
-  if (side === 'bottom') return { y: -15 };
-  if (side === 'left') return { x: 15 };
+  if (side === 'top') {return { y: 15 };}
+  if (side === 'bottom') {return { y: -15 };}
+  if (side === 'left') {return { x: 15 };}
   return { x: -15 };
 }
 
@@ -105,7 +105,7 @@ function TooltipProvider({
 
   const showTooltip = React.useCallback(
     (data: TooltipData) => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (timeoutRef.current) {clearTimeout(timeoutRef.current);}
       if (currentTooltip !== null) {
         setCurrentTooltip(data);
         return;
@@ -118,7 +118,7 @@ function TooltipProvider({
   );
 
   const hideTooltip = React.useCallback(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) {clearTimeout(timeoutRef.current);}
     timeoutRef.current = window.setTimeout(() => {
       setCurrentTooltip(null);
       lastCloseTimeRef.current = Date.now();
@@ -126,7 +126,7 @@ function TooltipProvider({
   }, [closeDelay]);
 
   const hideImmediate = React.useCallback(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (timeoutRef.current) {clearTimeout(timeoutRef.current);}
     setCurrentTooltip(null);
     lastCloseTimeRef.current = Date.now();
   }, []);
@@ -137,7 +137,7 @@ function TooltipProvider({
 
   React.useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') hideImmediate();
+      if (e.key === 'Escape') {hideImmediate();}
     };
     window.addEventListener('keydown', onKeyDown, true);
     window.addEventListener('scroll', hideImmediate, true);
@@ -319,7 +319,7 @@ function TooltipOverlay() {
                     ...initialFromSide(rendered.data.side),
                   }}
                   onAnimationComplete={() => {
-                    if (!rendered.open) setRendered({ data: null, open: false });
+                    if (!rendered.open) {setRendered({ data: null, open: false });}
                   }}
                   transition={transition}
                   {...rendered.data.contentProps}
@@ -378,14 +378,14 @@ function Tooltip({
 type TooltipContentProps = WithAsChild<HTMLMotionProps<'div'>>;
 
 function shallowEqualWithoutChildren(a?: HTMLMotionProps<'div'>, b?: HTMLMotionProps<'div'>) {
-  if (a === b) return true;
-  if (!a || !b) return false;
+  if (a === b) {return true;}
+  if (!a || !b) {return false;}
   const keysA = Object.keys(a).filter((k) => k !== 'children');
   const keysB = Object.keys(b).filter((k) => k !== 'children');
-  if (keysA.length !== keysB.length) return false;
+  if (keysA.length !== keysB.length) {return false;}
   for (const k of keysA) {
     // @ts-expect-error index
-    if (a[k] !== b[k]) return false;
+    if (a[k] !== b[k]) {return false;}
   }
   return true;
 }
@@ -438,7 +438,7 @@ function TooltipTrigger({
   const suppressNextFocusRef = React.useRef(false);
 
   const handleOpen = React.useCallback(() => {
-    if (!triggerRef.current) return;
+    if (!triggerRef.current) {return;}
     setReferenceEl(triggerRef.current);
     const rect = triggerRef.current.getBoundingClientRect();
     showTooltip({
@@ -496,7 +496,7 @@ function TooltipTrigger({
   const handleFocus = React.useCallback(
     (e: React.FocusEvent<HTMLDivElement>) => {
       onFocus?.(e);
-      if (suppressNextFocusRef.current) return;
+      if (suppressNextFocusRef.current) {return;}
       handleOpen();
     },
     [handleOpen, onFocus],

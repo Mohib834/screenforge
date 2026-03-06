@@ -1,4 +1,4 @@
-import { Button } from "../../lib/ui"
+import { Button } from "../../../lib/ui"
 
 
 export const ZoomWidget = () => {

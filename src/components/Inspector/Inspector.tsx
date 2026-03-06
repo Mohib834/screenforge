@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import { IconNotes } from "@tabler/icons-react"
-import { Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../lib/ui"
-import { SelectedZoomAction, ZoomConfig, CLIP_DEFS, defaultClipConfig } from "../types/timeline"
+import { Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../lib/ui"
+import { ZoomConfig, CLIP_DEFS, defaultClipConfig } from "../../types/timeline"
+import { useStore } from "../../store"
 
 // ── Zoom config field definitions ─────────────────────────────────────────────
 
@@ -17,19 +18,14 @@ const ZOOM_NUMBER_FIELDS: { key: keyof ZoomConfig; label: string; min: number; m
     { key: "easeDuration", label: "Ease (ms)", min: 100, max: 800, step: 50 },
 ]
 
-// ── Props ─────────────────────────────────────────────────────────────────────
-
-interface Props {
-    selectedAction: SelectedZoomAction
-}
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export const AppWidgetConfig = ({ selectedAction }: Props) => {
+export const Inspector = () => {
+    const selectedAction = useStore(s => s.selectedClip);
     const [config, setConfig] = useState<ZoomConfig>(defaultClipConfig("zoom") as ZoomConfig)
 
     useEffect(() => {
-        if (selectedAction) setConfig(defaultClipConfig(selectedAction.effectId) as ZoomConfig)
+        if (selectedAction) { setConfig(defaultClipConfig(selectedAction.effectId) as ZoomConfig) }
     }, [selectedAction?.id])
 
     const set = (key: keyof ZoomConfig) => (val: string) =>
@@ -37,8 +33,8 @@ export const AppWidgetConfig = ({ selectedAction }: Props) => {
 
     if (!selectedAction) {
         return (
-            <div className="p-4 ml-auto w-[240px] border-l border-sf-border flex flex-col items-center justify-center gap-2 text-center">
-                <IconNotes size={40} className="text-sf-muted" />
+            <div className="p-4 ml-auto w-[240px] border-l border-sf-border flex flex-col items-center justify-center gap-2 text-center -mt-20">
+                <IconNotes size={48} stroke={1.5} className="text-sf-muted" />
                 <div>
                     <p className="text-sm text-sf-secondary">No clip selected</p>
                     <p className="text-xs text-sf-muted">Click a timeline action to edit</p>

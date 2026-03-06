@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { IconVideoOff } from "@tabler/icons-react"
-import { Button } from "../../lib/ui"
+import { Button } from "../../../lib/ui"
 
 const MOCK_RECORDINGS: { name: string; date: string; size: string; hue: number }[] = [
     { name: "Product Demo", date: "Feb 28", size: "62.4 MB", hue: 220 },

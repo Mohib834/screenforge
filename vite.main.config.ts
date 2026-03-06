@@ -1,4 +1,10 @@
 import { defineConfig } from 'vite';
 
-// https://vitejs.dev/config
-export default defineConfig({});
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      // Tell Vite NOT to bundle this module
+      external: ['uiohook-napi', 'electron'],
+    },
+  },
+});

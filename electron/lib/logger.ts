@@ -20,8 +20,8 @@ const LEVEL_COLOR: Record<string, string> = {
 };
 
 const serialize = (value: unknown): string => {
-  if (value instanceof Error) return value.stack ?? value.message;
-  if (typeof value === 'object' && value !== null) return JSON.stringify(value, null, 2);
+  if (value instanceof Error) {return value.stack ?? value.message;}
+  if (typeof value === 'object' && value !== null) {return JSON.stringify(value, null, 2);}
   return String(value);
 };
 

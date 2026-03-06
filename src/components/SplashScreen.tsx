@@ -2,7 +2,7 @@ import type { PreloadProgress } from '../types/index';
 import logoSrc from '../assets/logo.png';
 import { useEffect, useState } from 'react';
 
-export default function SplashScreen() {
+const SplashScreen = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -42,3 +42,5 @@ export default function SplashScreen() {
     </div>
   );
 }
+
+export default SplashScreen
