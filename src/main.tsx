@@ -3,7 +3,7 @@ import './index.css';
 import SplashScreen from './components/SplashScreen';
 import FloatingToolbar from './components/FloatingToolbar';
 import { TooltipProvider } from './lib/ui';
-import App from './App';
+import App from './app';
 
 const hash = window.location.hash.slice(1); // strip leading #
 
