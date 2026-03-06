@@ -1,2 +1,0 @@
-// ZoomActivity — placeholder
-export {};

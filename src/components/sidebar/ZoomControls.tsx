@@ -1,2 +1,0 @@
-// ZoomControls — placeholder
-export {};
